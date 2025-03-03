@@ -1,6 +1,6 @@
 from django.utils.translation.trans_null import activate
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.response import Response
 from apps.models import Position
 from apps.serializer import PositionModelSerializer
@@ -35,7 +35,7 @@ class PositionDetailApiView(RetrieveAPIView):
     queryset = Position.objects.all()
     serializer_class = PositionModelSerializer
     lookup_field = 'pk'
-    lookup_url_kwarg = 'position_id'
+    lookup_url_kwarg = 'pk'
 
 
 @extend_schema(
@@ -45,4 +45,14 @@ class PositionUpdateApiView(UpdateAPIView):
     queryset = Position.objects.all()
     serializer_class = PositionModelSerializer
     lookup_field = 'pk'
-    lookup_url_kwarg = 'position_id'
+    lookup_url_kwarg = 'pk'
+
+
+@extend_schema(
+    tags=['position']
+)
+class PositionDeleteApiView(DestroyAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionModelSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'

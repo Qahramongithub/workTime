@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-=a9)3q8p27kw6#vvorl(h@ib2bn@ks7ntosoa6712p133@1s*i
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -120,3 +120,4 @@ LOCALE_PATHS = [
     BASE_DIR / 'locale',  # Tarjima fayllari shu papkada saqlanadi
 ]
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'uz'
+

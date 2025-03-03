@@ -2,6 +2,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
 from apps.models import Employee, Kpi
 from apps.serializer import KpiSerializer
 
@@ -21,9 +22,9 @@ class KpiApiView(APIView):
         if not employee:
             return Response({"error": "Xodim topilmadi."}, status=status.HTTP_404_NOT_FOUND)
 
-        if status_value == Kpi.KpiType.KPI:
+        if status_value == Kpi.Status.KPI:
             employee.balance += price
-        elif status_value == Kpi.KpiType.AVANS:
+        elif status_value == Kpi.Status.AVANS:
             employee.balance -= price
         else:
             return Response({"error": "Noto‘g‘ri status."}, status=status.HTTP_400_BAD_REQUEST)

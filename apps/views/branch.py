@@ -1,13 +1,13 @@
-from django.utils.translation.trans_real import activate
 from drf_spectacular.utils import extend_schema
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
-from rest_framework.response import Response
-from apps.models import Branch, Shift
-from apps.serializer import BranchModelSerializer, ShiftModelSerializer
+from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, \
+    RetrieveAPIView, DestroyAPIView
+
+from apps.models import Branch, Day
+from apps.serializer import BranchModelSerializer, DayModelSerializer
 
 
 @extend_schema(
-    tags=['branch'],
+    tags=['branch']
 )
 class BranchCreateApiView(CreateAPIView):
     queryset = Branch.objects.all()
@@ -15,68 +15,84 @@ class BranchCreateApiView(CreateAPIView):
 
 
 @extend_schema(
-    tags=['branch'],
+    tags=['branch']
 )
 class BranchListApiView(ListAPIView):
     queryset = Branch.objects.all()
     serializer_class = BranchModelSerializer
 
-    def list(self, request, *args, **kwargs):
-        lang = request.headers.get('Accept-Language', 'uz')  # Standart til `uz`
-        activate(lang)  # Tarjima tilini faollashtiramiz
-        response = super().list(request, *args, **kwargs)
-        return Response(response.data)
-
 
 @extend_schema(
-    tags=['branch'],
-)
-class BranchDetailApiView(RetrieveAPIView):
-    queryset = Branch.objects.all()
-    serializer_class = BranchModelSerializer
-    lookup_field = 'id'
-
-
-@extend_schema(
-    tags=['branch'],
+    tags=['branch']
 )
 class BranchUpdateApiView(UpdateAPIView):
     queryset = Branch.objects.all()
     serializer_class = BranchModelSerializer
-    lookup_field = 'id'
-
-
-# ================================== shift ========================================================
-
-@extend_schema(
-    tags=['shift']
-)
-class ShiftCreateApiView(CreateAPIView):
-    queryset = Shift.objects.all()
-    serializer_class = ShiftModelSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'
 
 
 @extend_schema(
-    tags=['shift']
+    tags=['branch']
 )
-class ShiftListApiView(ListAPIView):
-    queryset = Shift.objects.all()
-    serializer_class = ShiftModelSerializer
+class BranchDetailApiView(RetrieveAPIView):
+    queryset = Branch.objects.all()
+    serializer_class = BranchModelSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'
 
 
 @extend_schema(
-    tags=['shift']
+    tags=['branch']
 )
-class ShiftDetailApiView(RetrieveAPIView):
-    queryset = Shift.objects.all()
-    serializer_class = ShiftModelSerializer
-    lookup_field = 'id'
+class BranchDeleteApiView(DestroyAPIView):
+    queryset = Branch.objects.all()
+    serializer_class = BranchModelSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'
 
 
 @extend_schema(
-    tags=['shift']
+    tags=['day']
 )
-class ShiftUpdateApiView(UpdateAPIView):
-    queryset = Shift.objects.all()
-    serializer_class = ShiftModelSerializer
-    lookup_field = 'id'
+class DayListApiView(ListAPIView):
+    queryset = Day.objects.all()
+    serializer_class = DayModelSerializer
+
+
+@extend_schema(
+    tags=['day']
+)
+class DayCreateApiView(CreateAPIView):
+    queryset = Day.objects.all()
+    serializer_class = DayModelSerializer
+
+
+@extend_schema(
+    tags=['day']
+)
+class DayUpdateApiView(UpdateAPIView):
+    queryset = Day.objects.all()
+    serializer_class = DayModelSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'
+
+
+@extend_schema(
+    tags=['day']
+)
+class DayDetailApiView(RetrieveAPIView):
+    queryset = Day.objects.all()
+    serializer_class = DayModelSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'
+
+
+@extend_schema(
+    tags=['day']
+)
+class DayDeleteApiView(DestroyAPIView):
+    queryset = Day.objects.all()
+    serializer_class = DayModelSerializer
+    lookup_field = 'pk'
+    lookup_url_kwarg = 'pk'

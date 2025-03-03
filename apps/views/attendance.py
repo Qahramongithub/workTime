@@ -1,5 +1,4 @@
 import datetime
-
 from django.db.models import Q
 from django.utils.dateparse import parse_date
 from drf_spectacular.utils import extend_schema
@@ -8,8 +7,7 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from apps.models import Attendance
+from apps.models import Attendance, Group
 from apps.serializer import AttendanceModelSerializer, AttendanceSearchFilterSerializer
 
 
@@ -18,7 +16,24 @@ from apps.serializer import AttendanceModelSerializer, AttendanceSearchFilterSer
 )
 class AttendanceCreateAPIView(CreateAPIView):
     serializer_class = AttendanceModelSerializer
-    queryset = Attendance.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        today = datetime.date.today()
+
+        # Guruhda bugun dars bor yoki yo‘qligini tekshirish
+        group_id = request.data.get('group')
+        if not group_id:
+            return Response({"error": "Guruh ID berilishi shart!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        group = Group.objects.filter(id=group_id).first()
+        if not group:
+            return Response({"error": "Guruh topilmadi!"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Guruh bugungi kunda dars o'tadimi?
+        if not group.days.filter(name=today.strftime('%A').lower()).exists():
+            return Response({"error": "Bugun ushbu guruh uchun dars yo‘q!"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return super().create(request, *args, **kwargs)
 
 
 @extend_schema(
