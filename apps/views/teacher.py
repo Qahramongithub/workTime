@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
+from rest_framework.permissions import AllowAny
 
 from apps.models import Employee
 from apps.serializer import EmployeeSerializer
@@ -13,6 +14,9 @@ from apps.serializer import EmployeeSerializer
 class EmployeeCreateApiView(CreateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    permission_classes = AllowAny,
+
+
 
 
 @extend_schema(

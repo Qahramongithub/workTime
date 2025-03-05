@@ -1,10 +1,5 @@
-import json
-from random import choices
-
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
-from rest_framework.relations import PrimaryKeyRelatedField
-from rest_framework.serializers import ListField, IntegerField, DictField
 
 from apps.models import Attendance, Position, Employee, Student, Group, Day, Branch, Room
 
@@ -34,7 +29,7 @@ class DayModelSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.Serializer):
-    days = ListField(child=PrimaryKeyRelatedField(queryset=Day.objects.all()), required=False)
+    days = serializers.PrimaryKeyRelatedField(queryset=Day.objects.all(), many=True, required=False)
     full_name = serializers.CharField(max_length=255)
     phone_number = serializers.CharField(max_length=255)
     seniority = serializers.IntegerField()
@@ -42,9 +37,20 @@ class EmployeeSerializer(serializers.Serializer):
     photo = serializers.ImageField(required=False)
     balance = serializers.DecimalField(max_digits=10, decimal_places=2)
     password = serializers.CharField(max_length=255)
-    positions = serializers.IntegerField()
-    gender = serializers.ChoiceField(choices=Employee.Gender, default=Employee.Gender.MALE)
-    branch = serializers.IntegerField()
+    position = serializers.PrimaryKeyRelatedField(queryset=Position.objects.all())
+    gender = serializers.ChoiceField(choices=Employee.Gender.choices, default=Employee.Gender.MALE)
+    branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), many=True, required=False)
+
+    def create(self, validated_data):
+        days = validated_data.pop('days', [])
+        branch = validated_data.pop('branch', [])
+        employee = Employee.objects.create(**validated_data)
+        if days:
+            employee.days.set(days)
+        if branch:
+            employee.branch.set(branch)
+        return employee
+
 
 class StudentModelSerializer(serializers.ModelSerializer):
     class Meta:
